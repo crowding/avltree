@@ -1,6 +1,6 @@
-Fairly simple/toy implemtataion of an AVL tree in Python.
+Fairly simple/toy implementation of an AVL tree in Python.
 
 Interface is similar to `set` but keeps its entries sorted.
 
-Doesn't quite implement all the same methods
-as `set`, but the rest is trivial.
+Doesn't quite implement all the same methods as `set`, but the rest is
+trivial.
