@@ -66,6 +66,9 @@ class NullNode(AvlNode):
     def __iter__(self):
         yield from []
 
+    def __contains__(self, item):
+        return False
+
 nullNode = NullNode()
 
 
@@ -164,12 +167,20 @@ class ItemNode(AvlNode):
         yield self.item
         yield from iter(self.right)
 
+    def __contains__(self, item):
+        if item == self.item:
+            return True
+        elif item < self.item:
+            return item in self.left
+        elif item > self.item:
+            return item in self.right
+
 
 class AvlTree:
-    """Container for an AVL tree. Supports add/remove/update/iter, and
-    iterates items in sorted order."""
+    """Container for an AVL tree. Supports add, remove, update,
+    contains, and iter, and iterates items in sorted order."""
     def __init__(self, seq=[]):
-        self.root = NullNode()
+        self.root = nullNode
         self.update(seq)
 
     def add(self, item):
@@ -187,3 +198,6 @@ class AvlTree:
 
     def __iter__(self):
         yield from iter(self.root)
+
+    def __contains__(self, item):
+        return item in self.root
