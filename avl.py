@@ -37,7 +37,7 @@ class AvlNode:
 
 class NullNode(AvlNode):
     """Placeholder used by nodes without children. Normally there will be only
-    one of these that is reused (null object pattern.) """
+    one of these, `nullNode`, that is reused (null object pattern.) """
 
     def __init__(self):
         self.item = None
@@ -73,10 +73,9 @@ class ItemNode(AvlNode):
 
     def __init__(self, item, left=nullNode, right=nullNode):
         self.item = item
-        self.left = left
-        self.right = right
-        self.height = 1 + max(left.height,
-                              right.height)
+        self._left = left
+        self._right = right
+        self._updateHeight()
 
     def isNull(self):
         return False
@@ -86,11 +85,9 @@ class ItemNode(AvlNode):
         and return the new root after rebalancing."""
         if item < self.item:
             self.left = self.left.insert(item)
-            self.height = max(self.height, self.left.height + 1)
             return self.rebalance()
         elif item > self.item:
             self.right = self.right.insert(item)
-            self.height = max(self.height, self.right.height + 1)
             return self.rebalance()
         else:
             return self
@@ -132,6 +129,29 @@ class ItemNode(AvlNode):
             return self
 
     @property
+    def left(self):
+        return self._left
+
+    # whenever subtrees are modified, also update height.
+    @left.setter
+    def left(self, value):
+        self._left = value
+        self._updateHeight()
+
+    @property
+    def right(self):
+        return self._right
+
+    @right.setter
+    def right(self, value):
+        self._right = value
+        self._updateHeight()
+
+    def _updateHeight(self):
+        self.height = max(self.left.height, self.right.height) + 1
+
+    # Currently I track height rather than balance.
+    @property
     def balance(self):
         return self.left.height - self.right.height
 
@@ -146,6 +166,8 @@ class ItemNode(AvlNode):
 
 
 class AvlTree:
+    """Container for an AVL tree. Supports add/remove/update/iter, and
+    iterates items in sorted order."""
     def __init__(self, seq=[]):
         self.root = NullNode()
         self.update(seq)
